@@ -6,10 +6,16 @@ from ola.ClientWrapper import ClientWrapper
 from pprint import pprint as pp
 import datetime
 import itertools
+import math
 
 # global variables
 wrapper = ClientWrapper()
 client = wrapper.Client()
+
+
+def colorize(minute, frequency=0.03, amplitude=127, center=128):
+    value = math.sin(minute * frequency) * amplitude + center
+    return int(round(value,1))
 
 
 def minutes_since_midnight():
@@ -31,21 +37,25 @@ def dmx_send(r, g, b, x, universe=0):
     wrapper.Run()
 
 
-# while True:
-    # data = array.array('B', [randint(0,255), randint(0,255), randint(0,100), randint(0,80)])
-    # print('hello')
-    #data = array.array('B', [randint(0,255), randint(0,255), randint(0,255), randint(0,100)])
-    # dmx_send(data)
-    # time.sleep(5)
+def adjust_color(minute):
+    r = colorize(minute, frequency=0.004363323129985824)
+    g = colorize(minute + 480, frequency=0.004363323129985824)
+    b = colorize(minute + 960, frequency=0.004363323129985824)
+    x = colorize(minute + 960, frequency=0.004363323129985824)
+    print(minute, r, g, b, x)
+    dmx_send(r, g, b, x)
+
+
+while True:
+    minute = minutes_since_midnight()
+    adjust_color(minute)
+    time.sleep(60)
 
 def rand(minute):
     return randint(0,255)
 
-for minute in itertools.cycle(range(0, 1439)):
-    print(minute)
-    r = rand(minute)
-    g = rand(minute)
-    b = rand(minute)
-    x = rand(minute)
-    dmx_send(r, g, b, x)
-    time.sleep(0.25)
+
+for minute in range(0, 1439):
+# for minute in itertools.cycle(range(0, 1439, 20)):
+    adjust_color(minute)
+    time.sleep(0.01)
