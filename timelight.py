@@ -13,7 +13,7 @@ wrapper = ClientWrapper()
 client = wrapper.Client()
 
 
-def colorize(minute, frequency=0.03, amplitude=127, center=128):
+def colorize(minute, frequency=0.0041887902047863905, amplitude=127, center=128):
     value = math.sin(minute * frequency) * amplitude + center
     return int(round(value,1))
 
@@ -38,10 +38,10 @@ def dmx_send(r, g, b, x, universe=0):
 
 
 def adjust_color(minute):
-    r = colorize(minute, frequency=0.004363323129985824)
-    g = colorize(minute + 480, frequency=0.004363323129985824)
-    b = colorize(minute + 960, frequency=0.004363323129985824)
-    x = colorize(minute + 960, frequency=0.004363323129985824)
+    r = colorize(minute + 240)
+    g = colorize(minute)
+    b = colorize(minute - 240)
+    x = colorize(minute - 480) // 4
     print(minute, r, g, b, x)
     dmx_send(r, g, b, x)
 
